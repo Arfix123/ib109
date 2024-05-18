@@ -4,8 +4,6 @@
 #include "Coin.h"
 #include "Thrower.h"
 
-#define COIN_COUNT 6
-
 void threadFunction(Coin& coin) {
     coin.throwCoin();
     coin.flipResult();
@@ -14,12 +12,6 @@ void threadFunction(Coin& coin) {
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
 
-    int process_Rank, size_Of_Cluster;
-
-    MPI_Comm_size(MPI_COMM_WORLD, &size_Of_Cluster);
-    MPI_Comm_rank(MPI_COMM_WORLD, &process_Rank);
-    
-    
     Coin coin;
     Thrower thrower(coin);
 
@@ -32,3 +24,4 @@ int main(int argc, char** argv) {
     MPI_Finalize();
     return 0;
 }
+
