@@ -1,6 +1,9 @@
 #pragma once
-#include <vector>
+#include <atomic>
+#include <memory>
 #include <optional>
+#include <pthread.h>
+#include <vector>
 #include "queue.h"
 
 // Implementation based on the paper "Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms"
@@ -82,35 +85,32 @@ public:
 };
 
 template <typename T>
-struct PosixQueue: public Queue<T>{
-    void enqueue(T value) override{
+struct PosixQueue : public Queue<T> {
+    void enqueue(T value) override {
         pthread_mutex_lock(&m);
         q.push_back(value);
         pthread_mutex_unlock(&m);
     }
 
-    std::optional<T> dequeue() override{
+    std::optional<T> dequeue() override {
         pthread_mutex_lock(&m);
-        if(q.size() > 0){
-            T = q.front();
+        std::optional<T> res;
+        if (!q.empty()) {
+            res = q.front();
             q.erase(q.begin());
-        }
-        else{
-            pthread_mutex_unlock(&m);
-            return std::nullopt;
         }
         pthread_mutex_unlock(&m);
         return res;
     }
 
-    bool isEmpty() override{
+    bool isEmpty() override {
         pthread_mutex_lock(&m);
         bool result = q.empty();
         pthread_mutex_unlock(&m);
-        return result
+        return result;
     }
 
-    private:
+private:
     pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
     std::vector<T> q;
 };

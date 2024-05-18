@@ -2,6 +2,9 @@
 #include <optional>
 #include <iostream>
 #include <chrono>
+#include <thread>
+
+# define TEST_SIZE 50000
 
 template <typename T>
 struct Queue {
@@ -11,20 +14,17 @@ struct Queue {
 };
 
 // Function to manipulate the queue
-template <typename T>
+template <typename T, bool delay = false>
 void manipulate_queue(Queue<T>* queue){
     int i = 1;
-    for(; i <= 10000; i+=5){
-        std::cout << "Enqueueing: " << i << std::endl;
+    for(; i <= TEST_SIZE; i+=5){
+        if (delay) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(2));
+        }
         queue->enqueue(i);
-        std::cout << "Enqueueing: " << i+1 << std::endl;
         queue->enqueue(i+1);
-        std::cout << "Enqueueing: " << i+2 << std::endl;
         queue->enqueue(i+2);
-        std::cout << "Enqueueing: " << i+3 << std::endl;
         queue->enqueue(i+3);
-        std::cout << "Enqueueing: " << i+4 << std::endl;
         queue->enqueue(i+4);
     }
-    std::cout << "Last value: " << i << std::endl;
 }
