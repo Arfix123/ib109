@@ -1,6 +1,8 @@
-#pragma once
-#include <vector>
+#include <atomic>
+#include <iostream>
+#include <memory>
 #include <optional>
+#include <thread>
 #include "queue.h"
 
 // Implementation based on the paper "Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms"
@@ -81,36 +83,25 @@ public:
     }
 };
 
-template <typename T>
-struct PosixQueue: public Queue<T>{
-    void enqueue(T value) override{
-        pthread_mutex_lock(&m);
-        q.push_back(value);
-        pthread_mutex_unlock(&m);
-    }
+int main() {
+    LockFreeQueue<int> queue;
 
-    std::optional<T> dequeue() override{
-        pthread_mutex_lock(&m);
-        if(q.size() > 0){
-            T = q.front();
-            q.erase(q.begin());
+    // Create 3 threads to manipulate the queue
+    std::thread t1(manipulate_queue<int>, &queue);
+    std::thread t2(manipulate_queue<int>, &queue);
+
+    // Wait for all threads to finish
+    t1.join();
+    t2.join();
+
+    std::cout << "All threads finished execution." << std::endl;
+    std::cout << "==============================" << std::endl;
+    while (!queue.isEmpty()) {
+        auto val = queue.dequeue();
+        if (val.has_value()) {
+            std::cout << "Dequeued: " << val.value() << std::endl;
         }
-        else{
-            pthread_mutex_unlock(&m);
-            return std::nullopt;
-        }
-        pthread_mutex_unlock(&m);
-        return res;
     }
 
-    bool isEmpty() override{
-        pthread_mutex_lock(&m);
-        bool result = q.empty();
-        pthread_mutex_unlock(&m);
-        return result
-    }
-
-    private:
-    pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
-    std::vector<T> q;
-};
+    return 0;
+}
