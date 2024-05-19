@@ -1,23 +1,11 @@
-#ifndef COIN_H
-#define COIN_H
-
-#include <iostream>
-#include <random>
-#include <mpi.h>
-
-#define loss_message "Sloužím ti, můj vládče, slunce naše jasné."
+#pragma once
 
 class Coin {
 public:
-    Coin(int *message) : result(0), message(message) {};
+    Coin() : result(0) {}
     void throwCoin();
-    bool finished();
 
-    int getResult() const;
-
-private:
+public:
     int result;
-    int *message;
+    bool active = true;
 };
-
-#endif // COIN_H
