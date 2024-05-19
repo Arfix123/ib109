@@ -1,12 +1,15 @@
 # Variables
-CXX = g++
+CXX = mpic++
 CXXFLAGS = -std=c++17 -Wall -pthread
 
 # Target executable
 TARGET = mini2
 
 # Source files
-SRCS = mini2.cpp
+SRCS = *.cpp
+
+# Header files
+HDRS = *.h *.hpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)

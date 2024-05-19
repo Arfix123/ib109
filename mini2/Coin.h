@@ -2,23 +2,22 @@
 #define COIN_H
 
 #include <iostream>
-#include <mutex>
 #include <random>
 #include <mpi.h>
 
+#define loss_message "Sloužím ti, můj vládče, slunce naše jasné."
+
 class Coin {
 public:
-    Coin();
+    Coin(int *message) : result(0), message(message) {};
     void throwCoin();
-    void flipResult();
-    void receiveMessage(int* buffer, int source, int tag);
-    void broadcastMessage(const std::string& message);
+    bool finished();
 
-    int getResult();
+    int getResult() const;
 
 private:
     int result;
-    std::mutex mtx;
+    int *message;
 };
 
 #endif // COIN_H
